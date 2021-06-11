@@ -1,0 +1,135 @@
+Microsoft Windows [Version 10.0.19041.985]
+(c) Microsoft Corporation. All rights reserved.
+
+C:\Users\Administrator>sqlplus
+
+SQL*Plus: Release 11.2.0.2.0 Production on 금 6월 11 16:16:10 2021
+
+Copyright (c) 1982, 2014, Oracle.  All rights reserved.
+
+Enter user-name: scott
+Enter password:
+
+Connected to:
+Oracle Database 11g Express Edition Release 11.2.0.2.0 - 64bit Production
+
+SQL> help spool
+
+ SPOOL
+ -----
+
+ Stores query results in a file, or optionally sends the file to a printer.
+
+ SPO[OL] [file_name[.ext] [CRE[ATE] | REP[LACE] | APP[END]] | OFF | OUT]
+
+
+SQL> spool 20210611_calendar.sql
+SQL> SELECT month_between(sysdate, '2000/01/01') from dual;
+SELECT month_between(sysdate, '2000/01/01') from dual
+       *
+ERROR at line 1:
+ORA-00904: "MONTH_BETWEEN": invalid identifier
+
+
+SQL> select months_between(sysdate, '2000/01/01') from dual;
+
+MONTHS_BETWEEN(SYSDATE,'2000/01/01')
+------------------------------------
+                          257.344483
+
+SQL> select add_months(sysdate, 6) from dual;
+
+ADD_MONT
+--------
+21/12/11
+
+SQL> select months_between(sysdate,'1996/02/04') from dual;
+
+MONTHS_BETWEEN(SYSDATE,'1996/02/04')
+------------------------------------
+                          304.247731
+
+SQL> -- 본인이 살아온 개월 수를 조회
+SQL> -- (1) 버림처리
+SQL> SELECT trunc(month_between(sysdate(), '2000/01/01')) from dual;
+SELECT trunc(month_between(sysdate(), '2000/01/01')) from dual
+                                  *
+ERROR at line 1:
+ORA-00907: missing right parenthesis
+
+
+SQL> SELECT trunc(month_between(sysdate, '2000/01/01')) from dual;
+SELECT trunc(month_between(sysdate, '2000/01/01')) from dual
+             *
+ERROR at line 1:
+ORA-00904: "MONTH_BETWEEN": invalid identifier
+
+
+SQL>
+SQL> SELECT trunc(months_between(sysdate, '2000/01/01')) from dual;
+
+TRUNC(MONTHS_BETWEEN(SYSDATE,'2000/01/01'))
+-------------------------------------------
+                                        257
+
+SQL>  SELECT trunc(months_between(sysdate, '2000/01/01')) || '개월' from dual;
+
+TRUNC(MONTHS_BETWEEN(SYSDATE,'2000/01/01'))||'개월'
+--------------------------------------------------------------------------------
+257개월
+
+SQL> SELECT trunc(months_between(sysdate, '99.01.01')) from dual;
+
+TRUNC(MONTHS_BETWEEN(SYSDATE,'99.01.01'))
+-----------------------------------------
+                                      269
+
+SQL> SELECT trunc(months_between(sysdate, '99-01-01')) from dual;
+
+TRUNC(MONTHS_BETWEEN(SYSDATE,'99-01-01'))
+-----------------------------------------
+                                      269
+
+SQL> -- 산술 연산
+SQL> -- (1) date+14
+SQL> select sysdate, sysdate+14, sysdate-14 from dual;
+
+SYSDATE  SYSDATE+ SYSDATE-
+-------- -------- --------
+21/06/11 21/06/25 21/05/28
+
+SQL> -- 경과 일수 계산하기 :>
+SQL> select sysdate, sysdate-14 from dual;
+
+SYSDATE  SYSDATE-
+-------- --------
+21/06/11 21/05/28
+
+SQL> select sysdate - '21/05/17' from dual;
+select sysdate - '21/05/17' from dual
+                 *
+ERROR at line 1:
+ORA-01722: invalid number
+
+
+SQL> -- 오류가 나는게 당연함.. 객체가 아니라서
+SQL> select 5 + 10 from dual;
+
+      5+10
+----------
+        15
+
+SQL> select '5' + '10' from dual;
+
+  '5'+'10'
+----------
+        15
+
+SQL> select ceil(sysdate - to_date('21/05/17', 'yy/mm/dd')) "공부 시작 일수" from dual;
+
+공부 시작 일수
+--------------
+            26
+
+SQL> spool off
+SQL>
