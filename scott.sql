@@ -270,4 +270,35 @@ case
           end "대상여부"
 from emp
 order by 대상여부;
+--16
+select empno, ename, hiredate, '근속년수' from emp
+where  trunc(months_between(sysdate,hiredate) /12) > 35
+order by hiredate;
+--17
+select * from emp
+where to_char(hiredate, 'yy') = '81';
+--18
+select count(deptno) as "1월" from emp
+where SUBSTR(hiredate, 4,5) like '%1';
 
+select count(*) || '명' as "1월" from emp
+where to_char(hiredate, 'mm') = '01';
+--19
+select * from emp;
+select count(hiredate) "1월" from emp where to_char(hiredate, 'mm') = '01';
+
+SELECT NVL(SUM(DECODE(TO_CHAR(HIREDATE,'MM'),'01',1)),0)  "1월"
+		,NVL(SUM(DECODE(TO_CHAR(HIREDATE,'MM'),'02',1)),0)  "2월"
+		,NVL(SUM(DECODE(TO_CHAR(HIREDATE,'MM'),'03',1)),0)  "3월"
+		,NVL(SUM(DECODE(TO_CHAR(HIREDATE,'MM'),'04',1)),0)  "4월"
+		,NVL(SUM(DECODE(TO_CHAR(HIREDATE,'MM'),'05',1)),0)  "5월"
+		,NVL(SUM(DECODE(TO_CHAR(HIREDATE,'MM'),'06',1)),0)  "6월"
+		,NVL(SUM(DECODE(TO_CHAR(HIREDATE,'MM'),'07',1)),0)  "7월"
+		,NVL(SUM(DECODE(TO_CHAR(HIREDATE,'MM'),'08',1)),0)  "8월"
+		,NVL(SUM(DECODE(TO_CHAR(HIREDATE,'MM'),'09',1)),0)  "9월"
+		,NVL(SUM(DECODE(TO_CHAR(HIREDATE,'MM'),'10',1)),0)  "10월"
+		,NVL(SUM(DECODE(TO_CHAR(HIREDATE,'MM'),'11',1)),0)  "11월"
+		,NVL(SUM(DECODE(TO_CHAR(HIREDATE,'MM'),'12',1)),0)  "12월"
+FROM EMP;
+--20
+select comm from emp;
