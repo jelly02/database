@@ -1,0 +1,137 @@
+## ------------------------------------
+##	DataBase : group function
+## ------------------------------------
+
+-- oracle SQL Developer
+	>> download
+	>> 압축해제 설치 
+	>> C:\00.practice\sqldeveloper>
+	
+-- 그룹함수
+	>> 복수행함수
+	
+	>> count(*) : null 포함한 전체 레코드 숫자 반환, 전체레코드 숫자
+	>> count(col) : null 제외한 레코드 숫자 반환
+	
+	>> max(col) : 최대값
+	>> min(col) : 최소값
+	>> sum(col) : 합계
+	>> avg(col) : 평균
+	
+-- SELECT 전체 형식	
+SELECT ~~
+FROM 테이블명1 [, 테이블명X, (SUB-QUERY)]
+WHERE 조건식1 [AND | OR | NOT] 조건식X
+GROUP BY 그룹핑대상컬럼명 [, 그룹핑대상컬럼명X]
+HAVING 그룹핑결과에대한조건식
+ORDER BY 정렬컬럼명 정렬방법, 정렬컬럼명X 정렬방법
+;	
+
+-- SELECT 조회(검색) 처리 순서
+5. SELECT ~~
+	1. FROM 테이블명1 [, 테이블명X, (SUB-QUERY)]
+	2. WHERE 조건식1 [AND | OR | NOT] 조건식X
+	3. GROUP BY 그룹핑대상컬럼명 [, 그룹핑대상컬럼명X]
+	4. HAVING 그룹핑결과에대한조건식
+6. ORDER BY 정렬컬럼명 정렬방법, 정렬컬럼명X 정렬방법
+
+
+-- rowid : 물리적 데이터(레코드) 저장위치 지칭 (동일한 레코드를 지칭 => 동일한 rowid)
+-- rownum : select 결과에 대한 일련번호 (select 결과에 따라서 일련번호는 동적 변경)
+
+
+## SUB-QUERY
+-- SQL 구문안에 있는 SQL 구문
+-- 1. 내부 SUB-QUERY 수행 먼저 => 수행결과를 2. 외부 SQL 구문에게 전달
+-- SUB-QUERY 수행결과가 단일컬럼, 다중컬럼, 단일행, 다중행 여부에 따라서 WHERE 조건연산자 제약 발생
+-- (SUB-QUERY)
+-- 위치 
+	>> SELECT 구문
+	>> FROM 구문 : INLINE-VIEW
+	>> WHERE 구문
+
+
+## 통계함수
+
+-- decode()
+	>> 오라클 전용
+	>> java 다중조건비교 : swtich(expr) ~ case "value1" : ~~~ ~ defult:
+	>> 형식 :
+	decode(
+		expr,
+		search-1,
+		result-1,
+		search-x,
+		result-x,
+		[default]
+	) "alias"
+	
+-- case()
+	>> ANSI 표준
+	>> java 다중조건비교 : if(조건식) ~~ else if(조건식x) ~~ default
+	>> 조건식 : 자유롭게 비교 가능
+	>> 형식 :
+	case 
+		when search-1 then result-1
+		when search-x then result-x
+		else default
+	end "alias"
+	
+
+## DDL : 객체 생성(create), 변경(alter), 삭제(drop)
+-- 객체 : table, sequence, view, index ... 등
+
+## table
+-- 도메인 데이터의 물리적인 저장구조 : 스키마(schema)
+-- 도메인 데이터 : 엔티티(Entity)
+-- table > record > column(속성)
+
+## table 생성
+1. 새로운 테이블 생성
+2. 기존 테이블 구조 참조해서 생성
+3. 기존 테이블 구조 + 데이터 참조해서 생성
+
+## 1. 새로운 테이블 생성
+create table 테이블명 (
+	컬럼명1 타입(길이) [제약지정],
+	컬럼명x 타입(길이) [제약지정],
+);
+
+## 제약(constraint)
+1. 식별키 : PK(primary key)
+2. 필수 : not null
+3. 중복불가 : unique
+4. 참조키 : FK(Foreign key)
+5. 기본값 : default 
+6. 검증 : check
+
+-- 부가적인제약(스키마) : 테이블명, 컬럼명, 순서, 타입, 길이
+
+## table 삭제
+drop table 테이블명;
+drop table 테이블명 cascade constraint; // 부모테이블과 자식테이블의 관계를 제거하면서 부모테이블 삭제
+
+## table 변경
+
+## Database Modeling tools
+-- ER-Win : 상용
+-- eXERD : 
+	>> 국내, 상용, 1달간 무료 사용
+	>> https://ko.exerd.com/down.jsp
+
+## 학생 성적 테이블 : 테이블명 student_score
+-- 15001 홍길동 92
+-- 1. 학번 number(5), 식별키, student_no
+-- 2. 이름 10자리, 필수, 중복허용, name
+-- 3. 점수 number(3), 선택, score
+
+create table student_score (
+	student_no number(5) primary key,
+	name varchar2(30) not null,
+	score number(3)
+);
+
+
+## 회원 테이블 정의서 
+-- 회원 스키마 스크립트 파일 : member_ddl.sql
+-- 회원 테이블 생성 

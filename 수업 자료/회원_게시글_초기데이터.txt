@@ -1,0 +1,43 @@
+## 회원관리 초기화데이터								
+아이디	비밀번호		이름		연락처			이메일			가입일		등급	마일리지	담당자
+user01	password01	홍길동	010-1234-1111	user01@work.com	2017.05.05	G	75000	
+user02	password02	강감찬	010-1234-1112	user02@work.com	2017.05.06	G	95000	
+user03	password03	이순신	010-1234-1113	user03@work.com	2017.05.07	G	3000	
+user04	password04	김유신	010-1234-1114	user04@work.com	2017.05.08	S			송중기
+user05	password05	유관순	010-1234-1115	user05@work.com	2017.05.09	A		
+
+## 게시글 관리 초기화데이터						
+게시번호	제목		내용						작성자	작성날짜			조회수	
+1		주말과제	회원도서관리DB설계			user05	2020.11.11		0	
+2		형상관리 	형상관리 소개				user04	2020.12.25		5	
+3		주말과제	화면정의서					user05	2021.02.14		0	
+4		과제제출	시간엄수					user05	2021.03.01		15	
+5		WEB참고	www.w3schools.com		user01	2021.05.26		5
+
+
+-- 지정한 컬럼, 순서대로 
+insert into member(member_id, member_pw, name, mobile, email, entry_date, grade, mileage)
+values('user01', 'password01', '홍길동', '010-1234-1111', 'user01@work.com	', '2017.05.05', 'G', 7500);
+
+-- 테이블 스키마 구조 순서대로 : 컬럼에 데이터가 없는 경우에는 임의의값지정, 또는 null
+insert into member
+values('user02', 'password02', '강감찬', '010-1234-1112', 'user02@work.com', '2017.05.06', 'G', 95000, null);
+
+-- 회원 3명 모두 추가 진행하시기 바랍니다.	
+insert into member
+values('user03', 'password03', '이순신', '010-1234-1113', 'user03@work.com', '2017.05.07', 'G', 3000, null);
+
+insert into member
+values('user04', 'password04', '김유신', '010-1234-1114', 'user04@work.com', '2017.05.08', 'S', null, '송중기');
+
+insert into member
+values('user05', 'password05', '유관순', '010-1234-1115', 'user05@work.com', '2017.05.09', 'A', null, null);
+
+## 게시글 관리 초기화데이터						
+게시번호	제목		내용						작성자	작성날짜			조회수	
+1		주말과제	회원도서관리DB설계			user05	2020.11.11		0	
+2		형상관리 	형상관리 소개				user04	2020.12.25		5	
+3		주말과제	화면정의서					user05	2021.02.14		0	
+4		과제제출	시간엄수					user05	2021.03.01		15	
+5		WEB참고	www.w3schools.com		user01	2021.05.26		5
+

@@ -1,0 +1,406 @@
+
+-- 데이터는 대소문자 구분함
+	>> 'MANAGER', 'manager', 'Manager'
+	>> upper(), lower()
+
+-- sql 구문 대소문자 구분하지 않음
+	>> 대소문자 구분함 : "keyName" => 대문자 자동변환되지않음
+	>> db에서 자동으로 모두 대문자 처리 : 대소문자 구분하지않음
+
+
+-- 컬럼명에 대한 alias(별명) 
+	>> 대소문자구분, 공백존재, 특수문자 : "Member Name"
+	
+
+-- 테스트 테이블 : 대소문자 구분한 테이블 생성됨
+create table "test" (
+	data1 varchar2(10),
+	"data2" varchar2(10)
+);	
+
+desc "test";
+
+drop table "test";
+
+## DDL : 객체 생성(create), 변경(alter), 삭제(drop)
+-- 객체 : table, sequence, view, index ... 등
+
+## table
+-- 도메인 데이터의 물리적인 저장구조 : 스키마(schema)
+-- 도메인 데이터 : 엔티티(Entity)
+-- table > record > column(속성)
+
+## table 생성
+1. 새로운 테이블 생성
+2. 기존 테이블 구조 참조해서 생성
+3. 기존 테이블 구조 + 데이터 참조해서 생성
+
+## 1. 새로운 테이블 생성
+create table 테이블명 (
+	컬럼명1 타입(길이) [제약지정],
+	컬럼명x 타입(길이) [제약지정],
+);
+
+## 제약(constraint)
+1. 식별키 : PK(primary key)
+	>> 단일 컬럼 : 컬럼 레벨, 테이블 레벨
+	>> 다중 컬럼 : 테이블 레벨
+2. 필수 : not null
+	>> 컬럼 레벨만 지정 가능
+3. 중복불가 : unique
+4. 참조키 : FK(Foreign key)
+
+5. 기본값 : default 
+6. 검증 : check
+
+-- 부가적인제약(스키마) : 테이블명, 컬럼명, 순서, 타입, 길이
+
+## table 삭제
+drop table 테이블명;
+drop table 테이블명 cascade constraint; // 부모테이블과 자식테이블의 관계를 제거하면서 부모테이블 삭제
+
+## table 변경
+
+## Database Modeling tools
+-- ER-Win : 상용
+-- eXERD : 
+	>> 국내, 상용, 1달간 무료 사용
+	>> https://ko.exerd.com/down.jsp
+
+## 학생 성적 테이블 : 테이블명 student_score
+-- 15001 홍길동 92
+-- 1. 학번 number(5), 식별키, student_no
+-- 2. 이름 10자리, 필수, 중복허용, name
+-- 3. 점수 number(3), 선택, score
+
+create table student_score (
+	student_no number(5) primary key,
+	name varchar2(30) not null,
+	score number(3)
+);
+
+
+## 회원 테이블 정의서 
+-- 회원 스키마 스크립트 파일 : member_ddl.sql
+-- 회원 테이블 생성 
+
+
+## 제약 지정방법
+1. 컬럼 레벨 : not null : 컬럼레벨만 가능
+	create table 테이블명 (
+		컬럼명 타입(길이) 제약지정,
+		컬럼명 타입(길이) 제약지정
+	);
+	
+2. 테이블 레벨
+	create table 테이블명 (
+		컬럼명 타입(길이) 제약지정,
+		컬럼명 타입(길이) 제약지정,
+		constraint 제약명 제약지정 expr,
+		constraint 제약명 제약지정 expr,
+	);
+
+
+3. 테이블변경 제약 추가
+
+
+## 제약 지정방법 : 
+1. 제약명 지정하지 않고 제약 지정방법
+	>> 오라클에서는 자동으로 sys_xxxx 제약명 부여
+2. 제약명을 명시적으로 지정하고 제약 지정방법
+	>> PK_테이블명_컬럼명
+	>> FK_테이블명_컬럼명
+
+
+## DATA DICTIONARY
+-- 데이터베이스 데이터를 관리하기 위한 부가정보를 갖는 테이블
+-- 메타데이터
+-- USER_XXX : 사용자 사용
+-- DBA_XXX : 관리자 사용
+-- ALL_XXX : 사용자, 관리자 모두 사용
+
+-- 제약관련 data dictionary table
+	>> user_constraints 
+	>> user_cons_columns
+	
+	>> user_constraints 
+	CONSTRAINT_NAME   NOT NULL VARCHAR2(30)  
+	CONSTRAINT_TYPE            VARCHAR2(1)   
+	TABLE_NAME        NOT NULL VARCHAR2(30) 
+
+	>> user_cons_columns
+	CONSTRAINT_NAME NOT NULL VARCHAR2(30)   
+	TABLE_NAME      NOT NULL VARCHAR2(30)   
+	COLUMN_NAME              VARCHAR2(4000) 	
+	
+## 게시글 테이블 : notice
+-- 도메인 속성, 컬럼순서, 
+1. 게시글번호 : PK
+2. 제목 : 필수
+3. 내용 : 선택
+4. 작성자아이디(회원 아이디) : 필수(참조키)
+5. 작성날짜 : 필수, 현재날짜 , date 타입, 문자열 타입
+6. 조회수 : 선택
+
+-- 게시글 테이블 작성해주세요
+-- 주의사항 : 테이블명, 컬럼명, 제약명 지정시에 키워드(예약어) 사용불가
+CREATE table NOTICE (
+	notice_no number(8),
+    title varchar2(30) not null,
+    contents varchar2(500),
+    MEMBER_ID varchar2(30),
+    write_date date not null,
+    hit_count number(10),
+    CONSTRAINT PK_NOTICE_notice_no PRIMARY KEY (notice_no)
+);
+
+
+## 속성 종류(분류)
+1. 기본 속성(고유 속성)
+	>> 주민번호(식별키가능-대체키), 이름, 휴대폰(식별키가능-대체키), 이메일(식별키가능-대체키), 
+2. 유추 속성
+	>> 주민번호 => 나이, 성별, 출생지 등
+3. 설계 속성
+	>> 아이디(식별키), 비밀번호, 등급 ...
+	
+
+## 참조키(foreign key) 제약
+1. 부모테이블(Master Table)
+2. 자식테이블(Detail Table)
+
+-- 회원테이블(부모-PK) -> 게시글테이블(자식-FK)
+-- 부서테이블(부모) -> 직원테이블(자식)
+
+-- 식별관계
+	>> 자식테이블에서 FK(참조키)를 식별키로 사용
+-- 비식별관계
+	>> 자식테이블에서 FK(참조키)를 일반속으로 사용
+	
+-- PK = unique + not null	
+-- FK = 부모테이블에 존재함, null 허용
+
+-- 부모 테이블과 자식테이블로 분리 설계
+	>> 조인(join): 여러개의 분리된 테이블을 합쳐서 조회 가능
+
+-- 테이블생성
+	>> 부모 => 자식
+
+-- 테이블삭제
+	>> 자식 => 부모
+	drop table 자식테이블명;
+	drop table 부모테이블명;
+	
+	>> 부모 (자식관계를 함께 삭제, 자식 유지)
+	>> 회사폐업 : 판매물건에 대한 세금 납부, 회원(삭제), 판매(유지 =>판매에대한세금납부)
+
+	>> recyclebin : 완전삭제(삭제테이블 복구불가)
+	>> drop table 자식테이블명 purge;
+
+	>> recyclebin : 삭제테이블 휴지통 비우기
+	>> purge recyclebin;
+	
+
+## 참조키 제약 지정방법
+1. 컬럼레벨
+	create table 테이블명 (
+		컬럼명 타입(길이) 제약지정,
+		fk컬럼명 타입(길이) REFERENCES 부모테이블명(부모테이블식별키)
+	);
+	
+2. 테이블 레벨
+	create table 테이블명 (
+		컬럼명 타입(길이) 제약지정,
+		fk컬럼명 타입(길이) 제약지정,
+		constraint 제약명 제약지정 expr,
+		constraint FK_MEMBERID foreign key(fk컬럼명) REFERENCES 부모테이블명(부모테이블식별키)
+	);
+
+3. 테이블 생성후 제약 추가 변경
+
+
+-- 게시글 컬럼레벨 참조키 지정 
+CREATE table NOTICE (
+	notice_no number(8),
+    title varchar2(30) not null,
+    contents varchar2(500),
+    MEMBER_ID varchar2(30) REFERENCES MEMBER(MEMBER_ID),
+    write_date date not null,
+    hit_count number(10),
+    CONSTRAINT PK_NOTICE_notice_no PRIMARY KEY (notice_no)
+);
+	
+-- 게시글 테이블레벨 참조키 지정 	
+CREATE table NOTICE (
+	notice_no number(8),
+    title varchar2(30) not null,
+    contents varchar2(500),
+    MEMBER_ID varchar2(30),
+    write_date date not null,
+    hit_count number(10),
+    CONSTRAINT PK_NOTICE_notice_no PRIMARY KEY (notice_no),
+	constraint fk_memberid foreign key (MEMBER_ID) references member(member_id)
+);
+
+
+## 테이블 변경
+-- 형식 : alter table 테이블명...
+-- 컬럼추가 
+-- 컬럼삭제
+-- 컬럼변경 : 타입, 길이, 데이터 존재유무 제약
+
+-- 제약추가 형식:
+	alter table 테이블명
+	add CONSTRAINT 제약명 제약타입 expr;
+
+-- 테이블 구조와 제약 분리 : 
+	>> 가독성 
+	>> modeling tools : 자동 script file
+	
+## DML (데이터 조작어)
+-- 레코드 : C(추가) R(조회) U(변경) D(삭제)
+
+-- 레코드추가
+>> 단일행 추가
+1. 지정한컬럼에 대해서 값을 지정추가, NOT NULL 컬럼은 모두 포함되어있여함
+INSERT INTO 테이블명(컬럼명1, 컬럼명X) VALUES(값1, 값X);
+
+2. 테이블구조(스키마) 순서대로 값을 지정 추가
+INSERT INTO 테이블명 VALUES(값1, 값2, 값X);
+
+
+>> 다중행 추가 : 테스트 데이터, SAMPLE 데이터
+insert into 테이블명(컬럼명1, 컬럼명x)
+SELECT 컬럼명1, 컬럼명X
+~~~
+;
+	
+-- 레코드변경
+1. 지정한 컬럼에 대해서 모든 레코드의 값을 변경
+	UPDATE 테이블명 SET 컬럼명1=변경값 , 컬럼명N=값;
+
+2. 지정한 조건을 만족하는 레코드의 컬럼에 대해서 값을 변경
+	UPDATE 테이블명 SET 컬럼명1=변경값 , 컬럼명N=값 
+	WHERE 조건구문;
+
+
+-- 레코드 삭제
+1. 지정한 컬럼에 대해서 모든 레코드를 삭제
+	DELETE 테이블명;
+	DELETE FROM 테이블명;
+
+2. 지정한 조건을 만족하는 레코드만 삭제
+	DELETE 테이블명 WHERE 조건구문;
+
+
+3. 레코드 삭제 : 복구 불가능
+	-- TRUNCATE TABLE 테이블명 
+	-- 복구 불가능 => 영구적 삭제처리 commit 수행
+	-- WHERE 구문 사용 불가	
+	
+	
+## SEQUENCE 객체
+-- 일련번호를 자동 제공하는 데이터베이스 공유객체
+-- 테이블에 종속적이지는 않지만, 보통은 특정 테이블의 특정 컬럼을 대상 설계 사용
+
+1. 생성 : 기본값 생성, 시작 1, 자동증가 1 
+CREATE SEQUENCE 시퀀스명;
+CREATE SEQUENCE SEQ_NO;
+
+2. 시퀀스 속성 설정 생성 
+-- 시퀀스명 : SEQ_테이블명_컬럼명
+CREATE SEQUENCE 시퀀스명
+	START WITH 시작값
+	INCREMENT BY 증감값
+	MAXVALUE 최대값 | NOMAXVALUE
+	MINVALUE 최소값 | NOMINVALUE
+	CYCLE | NOCYCLE
+	CACHE 크기 | NOCACHE
+;	
+
+4. 시퀀스 사용
+-- 일련번호 추출 : 시퀀스명.NEXTVAL
+-- 현재일련번호 조회 : 시퀀스명.CURRVAL
+
+
+2. 삭제
+DROP SEQUENCE 시퀀스명;
+DROP SEQUENCE SEQ_NO;
+
+3. 변경
+
+
+## 테이블 생성해서, 직원테이블 10번 부서원들의 이름, 직무 정보를 레코드 추가
+1. TEST 테이블 : 신규 테이블
+	>> USER_NAME => ENAME V2(10)
+	>> USER_JOB	 => JOB V2(9)
+	
+CREATE TABLE TEST(
+	USER_NANE VARCHAR2(20),
+	USER_JOB VARCHAR2(15)
+);
+	
+2. 직원테이블의 레코드를 참조해서 TEST 테이블에 다중 레코드 추가	
+-- 직원테이블 10번 부서원의 이름, 직무 조회 	
+SELECT ENAME 이름, JOB 직무 FROM EMP WHERE DEPTNO = 10;
+
+-- 다중 레코드 추가 : 데이터는 SELECT 결과를 사용	
+INSERT INTO TEST(USER_NAME, USER_JOB)
+SELECT ENAME 이름, JOB 직무 FROM EMP 
+WHERE DEPTNO IN (10)
+;
+	
+
+## ## table 생성
+1. 새로운 테이블 생성
+	CREATE TABLE 테이블명(
+		컬럼명 타입(길이) [제약],
+		...
+	);
+	
+2. 기존 테이블 구조 참조해서 생성 : 
+	>> SELECT 조건식이 거짓이되도록
+	>> 테이블제약 NOT NULL 제약만 가져옴
+	>> 복사해서 생성한 테이블에 별도로 필요한 제약추가 해야함
+
+	CREATE TABLE 테이블명
+	AS
+	SELECT 구문
+	WHERE 1=2
+	;
+
+3. 기존 테이블 구조 + 데이터 참조해서 생성 
+	>> 백업용, 보안이슈(개발자 일부데이터만 제공)
+	CREATE TABLE 테이블명
+	AS
+	SELECT 구문
+	;
+	
+	
+	
+-- 10번 부서원들의 부서번호, 사번, 이름, 급여 정보 조회
+SELECT DEPTNO, EMPNO, ENAME, SAL
+FROM EMP
+WHERE DEPTNO=10;
+
+-- 10번 부서원들의 정보 및 구조를 갖는 테이블 생성 : EMP_10
+-- 동일한 컬럼명 사용
+CREATE TABLE EMP_10
+AS
+SELECT DEPTNO, EMPNO, ENAME, SAL
+FROM EMP
+WHERE DEPTNO=10;
+
+-- 컬럼명 다르게 지정 사용
+CREATE TABLE TEST_SAMPLE(NO, SID, NAME, MILEAGE)
+AS
+SELECT DEPTNO, EMPNO, ENAME, SAL
+FROM EMP
+WHERE DEPTNO=10;
+
+
+-- 직원테이블의 구조만을 참조해서 테이블 생성
+CREATE TABLE NEW_EMP
+AS
+SELECT * FROM EMP
+WHERE 1=2
+;
