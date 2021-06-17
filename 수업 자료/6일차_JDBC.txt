@@ -1,0 +1,270 @@
+## ---------------------------
+## JDBC 프로그래밍
+## ---------------------------
+-- Java DataBase Connectivity
+-- JDBC = Java + Database(SQL) 연결 위한 표준 api
+-- 회원관리시스템 : MEMBER 테이블
+-- Pattern Programming
+	>> DTO Pattern
+	>> Dao Pattern
+	>> Singleton Pattern
+	>> Factory Pattern
+	
+-- 자바 : MemberService.java
+	>> 회원 관리를 위한 서비스 제공하는 기능
+	>> 사용할 SQL 구문
+	>> 내일 수업시에 완전 여유있게 수업참여가능
+	
+	
+## 개발환경 환경설정
+	1. dbms : oracle 설치
+
+	2. jdbc api : 
+		=> 자바에서 제공한 표준 api
+		=> java se 포함 (rt.jar => java.sql.*, javax.sql.*)
+		
+	3. jdbc driver : 
+		=> db vendor가 구현해서 제공하는 구현물
+		=> oracle : ojdbc6.jar
+		=> 복사위치 : %java_home%\jre\lib\ext> ojdbc6.jar (공통 lib 위치)
+
+
+## JDBC API
+-- java.sql.*;
+-- DriverManager
+-- Connection
+-- Statement / PreparedStatement / CallableStatement
+-- ResultSet
+
+
+## JDBC 프로그래밍 기본절차
+1. 드라이버 로딩  
+2. DB 서버연결 
+3. SQL 통로개설
+4. SQL수행요청
+5. 결과처리
+6. 자원해제
+
+
+## JDBC Resource property
+## Oracle
+1. String driver = "oracle.jdbc.driver.OracleDriver";
+2. String url = "jdbc:oracle:thin:@localhost:1521:XE";
+3. String user = "scott";
+4. String password = "tiger";
+
+
+## JDBC 기본 예제
+// 1. 드라이버 로딩 
+Class.forName(driver);
+
+// 2. DB 서버연결 
+Connection conn = DriverManager.getConnection(url, user, password);
+
+// 3. SQL 통로개설 : 동적 SQL 수행 
+Statement stmt = conn.createStatement();
+// 4. SQL수행요청
+ResultSet rs = stmt.executeQuery("select * from dept");
+
+// 3. SQL 통로개설 : 정적 SQL 수행 
+PreparedStatement stmt = conn.preparetatement("select * from dept where dname=?");
+stmt.setString(1, dname);
+// 4. SQL수행요청
+ResultSet rs = stmt.executeQuery();
+
+5. 결과처리
+while(rs.next()) {
+	int deptno = rs.getInt("deptno");
+	String dname = rs.getString("dname");
+	String loc = rs.getString("loc");
+}
+
+6. 자원해제
+rs.close();
+stmt.close();
+conn.close();
+
+
+## 예외처리
+1. SQLException : dbms 
+2. ClassNotFoundException : jdbc driver loading
+
+
+## SQL 통로
+-- Statement 
+	=> 동적 SQL 수행
+	=> sql 구문오류 실행시(runtime) 발생
+	=> sql '문자열' 변환 번거로움
+	=> "sql수행문" n/w traffic 증가
+	
+	Statement stmt = conn.createStatement();
+	stmt.executeUpdate(sql);
+	stmt.exeuteQuery(sql);
+
+-- PreparedStatement 
+	=> 정적 SQL 수행 : sql 전용통로 
+	String sql = "insert into dept values(?, ?, ?)";
+	PreparedStatement pstmt = conn.prepareStatement(sql);
+	
+	// ? 기호에 매핑되는 값을 설정해서 sql 통로 완성
+	// setXxx(index, 값) : index는 ?의 위치, 시작은 1번부터
+	// setString(1, 변수명) => 문자열 => 'sql문자열' 변환
+	pstmt.setInt(1, deptno);
+	pstmt.setString(2, dname);
+	pstmt.setString(3, loc);
+	
+	// 전용통로이기때문에 실행시 sql 구문을 지정해서는 안됨(주의)
+	pstmt.executeUpdate();
+
+-- CallableStatement
+	=> Stored function, Stored procedure 호출 사용 통로
+	=> PL/SQL
+
+
+## SQL 수행요청 메서드
+-- R : executeQuery(sql) : ResultSet
+-- CUD : executeUpdate(sql) : int
+-- 기타 : execute(sql) : boolean
+
+
+## ResultSet API
+-- select 수행결과 객체
+-- select 결과 유무 및 해당레코드 커서 이동 : next()
+-- 해당레코드 컬럼데이터 가져오기 : 
+	=> getXxx(select컬럼인덱스번호) : xxx타입
+	=> getXxx("select컬럼명") : xxx타입
+	=> xxx : getString(), getInt(), getDate() 등
+
+
+## Design Pattern : JDBC 패턴 프로그래밍 
+
+## MVC Pattern
+	=> Model : Business Logic, Dao, DTO 클래스
+	=> View : Presentation Logic, UI(CUI, GUI)
+	=> Controller : 요청제어 클래스
+
+
+## Controller 클래스의 역할 및 절차
+1. 요청 파악 : 회원가입요청, 로그인요청 등
+2. 요청 데이터 가져오기
+3. 요청 데이터 검증
+4. Model에게 요청 처리의뢰
+5. 요청결과(응답) 받아서 응답화면 제어(이동)
+
+
+## DTO Pattern : Data Transfer Object
+	=> 데이터를 가지고 n/w 통해서 이동하는 객체
+	=> 테이블당 한개의 클래스로서 테이블의 구조참조
+	=> 컬럼 매핑되도록 멤버변수 선언
+	=> 설계규칙: encapsulation, 직렬화객체(implements java.io.Serializable)
+
+
+## DAO Pattern : 
+	=> Dat Access Object
+	=> 데이터베이스에 대한 crud 로직 구현 클래스
+	=> 테이블 스키마와 매핑되게 작성
+	=> Singleton pattern 적용해서 설계
+
+
+## Singleton Pattern
+	=> 하나의 클래스에 대해서 단일객체(single instance) 사용
+	=> 규칙 :
+	1. private 생성자
+	2. public static 클래스이름 getInstance() {
+			return instance;
+		}
+	3. private static 클래스이름 instance = new 클래스이름();
+
+	=> 사용 :Singleton Pattern 클래스 사용
+	클래스이름 instance = 클래스이름.getInstance();
+
+	=> [실급] DeptDao 클래스에 singleton pattern 적용해서 변경하세요.
+
+
+## Factory Pattern
+-- Dao Pattern (Singleton Pattern)
+-- connection 반환 메서드
+-- colose 자원해제 메서드
+
+-- 클래스이름 : FactoryDao
+-- 1. jdbc property : driver, url, user, password
+-- 2. 생성자 : driver 로딩
+		=> singleton pattern 
+		=> instance 변수
+		=> getInstance() 메서드
+-- 3. getConnection() : Connection
+-- 4. 자원해제
+		=> insert, update, delete(cud) : Statement/PreparedStatement, Connection
+		=> select : ResultSet, Statement/PreparedStatement, Connection
+		=> close(Statement, Connnection)
+		=> close(ResultSet, Statement, Connnection)
+		
+
+
+
+
+
+
+
+
+
+
+
+## jdbc 프로그래밍 절차 ##
+
+1. jdbc driver 로딩
+2. db 서버연결 : url, user, password  => Connection
+3. 연결된 서버와 통로 개설 => Statement, PreparedStatement, CallableStatement
+4. 통로이용 sql 실행 요청
+5. 실행결과 처리
+6. 자원해제
+
+
+## JDBC 관련 property : driver, url db벤더에서 결정
+String driver = "oracle.jdbc.driver.OracleDriver";
+String url = "jdbc:oracle:thin:@127.0.0.1:1521:XE";
+String user = "hr";
+String password = "tiger";
+
+
+## jdbc 프로그래밍 절차 : java.sql.* ##
+1.
+Class.forName(driver);
+throws ClasNotFoundException 처리
+
+2. 
+-- jdbc 관련 : throws SQLException 처리
+Connection conn = DriverManager.getConnection(url, user, password);
+
+3. 
+// 동적 sql 수행 통로 : 실행시에 crud sql 지정
+Statement stmt = conn.createStatement();
+
+// 정적 sql 수행 통로 : 통로 개설시에 sql 전용 지정 => 실행시에 값을 설정한 후에 실행 요청
+PreparedStatement stmt = conn.prepareStatement("insert int table values(?, ?,?)");
+
+4. C, R, U, D
+// C U D => 레코드 추가, 변경, 삭제 => 수행결과 적용된 레코드 수 반환
+int rows = stmt.executeUpdate(sql);
+
+// R => 조회 => 결과 여러개(0~n) 반환
+ResultSet rs = stmt.executeQuery(sql);
+
+// 기타등등 : ddl ==> 직접 어플리케이션에서 ddl 목적으로 사용하지는 않음(보안문제)
+boolean result = stmt.execute(sql);
+ 
+5. select 결과처리 : ResultSet
+-- next():boolean => 다음 cursor 이동 => 레코드 결과존재 유무 및 커서이동
+-- 현재 커서(레코드)의 컬럼단위로 데이터 추출 : getXxx(조회컬럼인덱스번호), getXxx("컬럼명")
+-- 자바는 인덱스 시작이 0번부터 이지만, db는 인덱스가 1번부터 시작
+-- db 숫자 => getInt()
+-- db 문자 => getString()
+-- db date => getString() / getDate()
+-- String => char ===> charAt(index번호) : char
+
+6. 
+rs.close();
+stmt.close();
+conn.close();
+
+	

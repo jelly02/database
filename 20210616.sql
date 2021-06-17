@@ -3,15 +3,15 @@ select * from member;
 
 -- 게시글 추가 
 insert into notice
-values ('1','이제 여름이네요','슬슬 더워져서 에어컨 틀어야 되요','user01','2021.06.15','1') ; 
+values ('1','주말과제	','회원도서관리DB설계','user05','2020.11.11','0') ; 
 insert into notice
-values ('2','겨울이 그리워요','차라리 추운 게 낫지','user02','2021.06.14','2') ; 
+values ('2','형상관리 ','형상관리 소개','user04','2020.12.25','5') ; 
 insert into notice
-values ('3','배라 무슨 맛 좋아하세요','저는 아몬드봉봉이랑 레인보우샤베트요','user03','2021.06.13','3') ; 
+values ('3','주말과제','화면정의서','user05','2021.02.14','0') ; 
 insert into notice
-values ('4','강아지 같이 산책 나가실 분','저는 오후 9시부터 나가는데 산책 친구 만들고 싶어요 ','user04','2021.06.12','4') ; 
+values ('4','과제제출','시간엄수','user05','2021.03.01','15') ; 
 insert into notice
-values ('5','점심 메뉴 골라주세요','다들 점심 뭐 드시나요','user05','2021.06.11','5') ; 
+values ('5','WEB참고','www.w3schools.com','user01','2021.05.26','5') ; 
 
 --일반회원 전체 조회 
 select * from member where grade = 'G';
